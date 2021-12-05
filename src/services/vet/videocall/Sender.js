@@ -1,9 +1,11 @@
-import { Button } from '@mui/material'
-// import './style.css'
+import './style.css'
+
 const Sender = () => {
-    let currentMeeting = sessionStorage.getItem("currentMeeting")
+    let currentMeeting = sessionStorage.getItem('currentMeeting')
+
+
+
     const webSocket = new WebSocket("ws://intense-reef-21186.herokuapp.com/")
-    console.log("abcd")
     webSocket.onmessage = (event) => {
         handleSignallingData(JSON.parse(event.data))
     }
@@ -18,15 +20,18 @@ const Sender = () => {
         }
     }
     
-    let username
+    let username 
+    
     function sendUsername() {
     
         username = document.getElementById("username-input").value
+        console.log(username)
         sendData({
             type: "store_user"
         })
     }
     
+    // sendUsername()
     function sendData(data) {
         data.username = username
         webSocket.send(JSON.stringify(data))
@@ -39,6 +44,11 @@ const Sender = () => {
         document.getElementById("video-call-div")
         .style.display = "inline"
     
+        navigator.getUserMedia = ( navigator.getUserMedia ||
+            navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia ||
+            navigator.msGetUserMedia)
+
         navigator.getUserMedia({
             video: {
                 frameRate: 24,
@@ -50,14 +60,13 @@ const Sender = () => {
             audio: true
         }, (stream) => {
             localStream = stream
+            console.log(localStream)
             document.getElementById("local-video").srcObject = localStream
     
             let configuration = {
                 iceServers: [
                     {
-                        "urls": ["stun:stun.l.google.com:19302", 
-                        "stun:stun1.l.google.com:19302", 
-                        "stun:stun2.l.google.com:19302"]
+                        "urls": ["stun:stun.l.google.com:19302"]
                     }
                 ]
             }
@@ -84,7 +93,7 @@ const Sender = () => {
             console.log(error)
         })
     }
-    
+    // startCall()
     function createAndSendOffer() {
         peerConn.createOffer((offer) => {
             sendData({
@@ -112,15 +121,14 @@ const Sender = () => {
     return ( 
         <div>
             <div>
-                <Button></Button>
-                <input placeholder='Enter username' type='text' id='username-input'value={currentMeeting} />
+                <input placeholder='Enter username' type='text' id='username-input' value={currentMeeting} />
                 <br />
                 <button onClick={sendUsername}>Send</button>
                 <button onClick={startCall}>Start Call</button>
             </div>
-            <div>
-                <video muted id="local-video" autoplay></video>
-                <video id="remote-video" autoplay></video>
+            <div id="video-call-div">
+                <video muted id="local-video" autoPlay></video>
+                <video id="remote-video" autoPlay></video>
                 <div className='call-action-div'>
                     <button onClick={muteVideo}>Mute Video</button>
                     <button onClick={muteAudio}>Mute Audio</button>
