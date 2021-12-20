@@ -2,7 +2,6 @@ import firebase from 'firebase'
 import {useEffect , useState} from 'react'
 import { Button } from '@mui/material'
 import { Link } from 'react-router-dom'
-const id = localStorage.getItem('userId')
 
 function SaveMeeting(val){
     sessionStorage.setItem('currentMeeting' ,val )
