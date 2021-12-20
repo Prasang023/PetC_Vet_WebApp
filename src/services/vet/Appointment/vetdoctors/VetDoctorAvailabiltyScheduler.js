@@ -3,16 +3,14 @@ import fire from '../../../../firebase/auth/fire.js'
 import { useEffect , useState } from 'react'
 import { Button } from '@mui/material'
 
-let id
-const GetId = async() =>{
-    id  =  await fire.auth().currentUser.uid 
-    return id
-}
+
+
 
 function GetData() {
     const [list, setlist] = useState([])
     const [data, setdata] = useState([])
-    id =GetId()
+    
+    const id = localStorage.getItem('userId')
    useEffect(() => {
         fire
         .firestore()
