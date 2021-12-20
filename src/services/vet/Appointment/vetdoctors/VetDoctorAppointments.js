@@ -10,6 +10,8 @@ function SaveMeeting(val){
 
 function GetMeetings(){
     const [data,setdata] = useState([])
+    const id = localStorage.getItem('userId')
+
    useEffect(()=>{
     firebase
     .firestore()

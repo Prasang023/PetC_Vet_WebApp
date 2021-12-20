@@ -19,7 +19,7 @@ import Home from './screens/Home';
 
 import Appointment from "./services/vet/Appointment/Appointment";
 import VetDoctorsMain from "./services/vet/Appointment/vetdoctors/VetDoctorsMain";
-import VetUserMain from "./services/vet/Appointment/vetusers/VetUserMain";
+// import VetUserMain from "./services/vet/Appointment/vetusers/VetUserMain";
 import UserProfile from "./screens/UserProfile";
 
 function App() {
@@ -130,9 +130,9 @@ useEffect(() => {
               <Route exact path='/vetdoctors'>
                 <VetDoctorsMain />
               </Route>
-              <Route exact path='/vetuser'>
+              {/* <Route exact path='/vetuser'>
                 <VetUserMain />
-              </Route>
+              </Route> */}
               <Route exact path='/userprofile'>
                 <UserProfile />
               </Route>
