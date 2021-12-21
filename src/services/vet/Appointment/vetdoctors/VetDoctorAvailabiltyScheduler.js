@@ -8,7 +8,7 @@ import { Button } from '@mui/material'
 
 function GetData() {
     const [list, setlist] = useState([])
-    const [data, setdata] = useState([])
+    // const [data, setdata] = useState([])
     
     const id = localStorage.getItem('userId')
    useEffect(() => {
