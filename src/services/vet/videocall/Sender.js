@@ -1,9 +1,12 @@
-import { Button } from '@mui/material'
+import './style.css'
+import React from 'react';
+import Button from '@mui/material/Button';
+import { TextField } from "@mui/material";
 // import './style.css'
 const Sender = () => {
     let currentMeeting = sessionStorage.getItem("currentMeeting")
-    const webSocket = new WebSocket("ws://intense-reef-21186.herokuapp.com/")
-    console.log("abcd")
+    const webSocket = new WebSocket("wss://intense-reef-21186.herokuapp.com/")
+    console.log(webSocket)
     webSocket.onmessage = (event) => {
         handleSignallingData(JSON.parse(event.data))
     }
@@ -29,7 +32,15 @@ const Sender = () => {
     
     function sendData(data) {
         data.username = username
+        if(webSocket.readyState === 1){
+            console.log(webSocket)
+            console.log(data)
         webSocket.send(JSON.stringify(data))
+        console.log("Connection Successful")
+        }
+        else{
+            console.log(webSocket.readyState)
+        }
     }
     
     
@@ -38,8 +49,8 @@ const Sender = () => {
     function startCall() {
         document.getElementById("video-call-div")
         .style.display = "inline"
-    
-        navigator.getUserMedia({
+
+        let constraints = {
             video: {
                 frameRate: 24,
                 width: {
@@ -47,10 +58,18 @@ const Sender = () => {
                 },
                 aspectRatio: 1.33333
             },
-            audio: true
-        }, (stream) => {
+            audio: false
+        };
+    
+        navigator.mediaDevices.getUserMedia(constraints)
+        .then(function(stream) {
             localStream = stream
-            document.getElementById("local-video").srcObject = localStream
+            console.log(localStream)
+            let video = document.getElementById("local-video")
+            video.srcObject = localStream
+            video.onloadedmetadata = function(e) {
+                video.play();
+              };
     
             let configuration = {
                 iceServers: [
@@ -66,8 +85,11 @@ const Sender = () => {
             peerConn.addStream(localStream)
     
             peerConn.onaddstream = (e) => {
-                document.getElementById("remote-video")
-                .srcObject = e.stream
+                let remVideo = document.getElementById("remote-video")
+                remVideo.srcObject = e.stream
+                remVideo.onloadedmetadata = function(e) {
+                    remVideo.play();
+                  };
             }
     
             peerConn.onicecandidate = ((e) => {
@@ -80,7 +102,8 @@ const Sender = () => {
             })
     
             createAndSendOffer()
-        }, (error) => {
+        })
+         .catch(function(error) {
             console.log(error)
         })
     }
@@ -118,7 +141,7 @@ const Sender = () => {
                 <button onClick={sendUsername}>Send</button>
                 <button onClick={startCall}>Start Call</button>
             </div>
-            <div>
+            <div id="video-call-div">
                 <video muted id="local-video" autoplay></video>
                 <video id="remote-video" autoplay></video>
                 <div className='call-action-div'>
