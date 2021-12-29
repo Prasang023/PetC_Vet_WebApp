@@ -7,16 +7,14 @@ let check = localStorage.getItem('userId')
     
 export default function Profile(){
     const [registered, setregistered] = useState(check)
-    let Page
-    if(registered){
-        Page = <DocProfile />
-    }
-    else{
-        Page = <DocRegForm />
-    }
-
+    const [page,setPage] = useState(<DocProfile />)
     const [imageUrl, setimageUrl] = useState('')
-
+    const togglePage = () =>{
+        if(page==<DocProfile/>)
+            setPage(<DocRegForm />)
+        else
+            setPage(<DocProfile/>)
+    }
     function SendProfileImage(){
         const id = firebase.auth().currentUser.uid
         firebase
@@ -36,8 +34,9 @@ export default function Profile(){
         <div style={{display:'flex' , flexDirection:'column' , justifyContent:'center' , alignItems:'center'}}>
             <br/>
             {
-                Page
+                page
             }
+            <Button onClick={togglePage}>Toggle Profile</Button>
             <input type ='file' onChange={e => setimageUrl(e.target.files[0])} />
             <Button onClick = {SendProfileImage}>Set Profile</Button>
         </div>
