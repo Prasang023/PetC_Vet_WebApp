@@ -9,6 +9,7 @@ import Appointments from './UserProfileComp/Appointments';
 export default function UserProfile() {
     const [open, setOpen] = React.useState(false)
     const [page,setpage] = React.useState('profile')
+    // console.log('profile')
     var val
     function TogglePage(page){
         setpage(page)
