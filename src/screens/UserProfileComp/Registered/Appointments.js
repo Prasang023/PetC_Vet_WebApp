@@ -2,6 +2,7 @@ import firebase from 'firebase'
 import {useEffect , useState} from 'react'
 import { Button } from '@mui/material'
 import { Link } from 'react-router-dom'
+import TransitionsModal from '../../../ui/core/Modal'
 const id = localStorage.getItem('userId')
 
 function SaveMeeting(val){
@@ -21,12 +22,24 @@ function GetMeetings(){
 
 export default function(){
     const data = GetMeetings()
+    const [open,setopen] = useState(false)
+    function openModal(){
+      setopen(true)
+    }
     return <div>
         This is appointment Page
         {
             data.map((res,i)=><div>
                 <p>{i} :  <Link to='/sender' ><Button onClick={() => SaveMeeting(res['meetingid'])}>{res['meetingid']}</Button></Link></p>
+                <Button onClick={()=> 
+                {
+                  openModal()
+                //   localStorage.setItem('toCancel' ,row['appointmentId'] )
+                }
+                  }>Cancel</Button>
             </div>)
         }
+      {open ? <TransitionsModal open={open} appointmentId={localStorage.getItem('toCancel')} /> : ''}
+
     </div>
 }
