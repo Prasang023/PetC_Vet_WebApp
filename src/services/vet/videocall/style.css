@@ -28,6 +28,11 @@
     position: absolute;
     left: 45%;
     bottom: 32px;
+    display: flex;  
+}
+
+.action{
+    margin: 0px 10px;
 }
 
 button {

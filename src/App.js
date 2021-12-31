@@ -121,9 +121,7 @@ useEffect(() => {
               <Route exact path='/contact'>
                 <Home handleLogout={handleLogout} />
               </Route>
-              <Route exact path='/sender'>
-                <Sender />
-              </Route>
+              <Route exact path='/sender' component={Sender} />
               <Route exact path='/vetappointment'>
                 <Appointment />
               </Route>

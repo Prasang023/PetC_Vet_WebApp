@@ -2,8 +2,16 @@ import './style.css'
 import React from 'react';
 import Button from '@mui/material/Button';
 import { TextField } from "@mui/material";
+import { useRef, useState } from "react"
+import VideoCam from "../../../ui/VetService/VideoCallComps/VideoCam"
+import Mic from "../../../ui/VetService/VideoCallComps/Mic"
+import CallEndIcon from '@mui/icons-material/CallEnd';
 // import './style.css'
-const Sender = () => {
+const Sender = (props) => {
+    
+    const { history } = props
+    console.log(props)
+    
     let currentMeeting = sessionStorage.getItem("currentMeeting")
     const webSocket = new WebSocket("wss://intense-reef-21186.herokuapp.com/")
     console.log(webSocket)
@@ -58,7 +66,7 @@ const Sender = () => {
                 },
                 aspectRatio: 1.33333
             },
-            audio: false
+            audio: true
         };
     
         navigator.mediaDevices.getUserMedia(constraints)
@@ -138,14 +146,25 @@ const Sender = () => {
     let isAudio = true
     function muteAudio() {
         isAudio = !isAudio
+        if(localStream!=null)
         localStream.getAudioTracks()[0].enabled = isAudio
     }
     
     let isVideo = true
     function muteVideo() {
         isVideo = !isVideo
+        if(localStream!=null)
         localStream.getVideoTracks()[0].enabled = isVideo
     }
+
+    function shut(){
+        console.log("shut down called")
+        peerConn.close()
+        webSocket.close()
+        localStream.getTracks().forEach(track => track.stop())
+        history.push("/dashboard")
+    }
+
     return ( 
         <div>
             <div>
@@ -159,8 +178,9 @@ const Sender = () => {
                 <video muted id="local-video" autoplay></video>
                 <video id="remote-video" autoplay></video>
                 <div className='call-action-div'>
-                    <button onClick={muteVideo}>Mute Video</button>
-                    <button onClick={muteAudio}>Mute Audio</button>
+                    <div className='action' onClick={muteVideo}><VideoCam /></div>
+                    <div className='action' onClick={muteAudio}><Mic /></div>
+                    <div className='action' onClick={shut}><Button variant="contained" color="primary" size="large"><CallEndIcon /></Button></div>
                 </div>
             </div>
         </div>
