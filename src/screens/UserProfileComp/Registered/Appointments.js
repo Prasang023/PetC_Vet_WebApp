@@ -26,6 +26,8 @@ export default function(){
     function openModal(){
       setopen(true)
     }
+
+    
     return <div>
         This is appointment Page
         {
@@ -34,12 +36,18 @@ export default function(){
                 <Button onClick={()=> 
                 {
                   openModal()
-                //   localStorage.setItem('toCancel' ,row['appointmentId'] )
+                  localStorage.setItem('toCancel' ,res['appointmentId'] )
+                  localStorage.setItem('toCancelVet' ,id )
+                  localStorage.setItem('toCancelUser' , res['userId'])
                 }
                   }>Cancel</Button>
             </div>)
         }
-      {open ? <TransitionsModal open={open} appointmentId={localStorage.getItem('toCancel')} /> : ''}
+      {open ? <TransitionsModal open={open} 
+      appointmentId={localStorage.getItem('toCancel')}
+      vetId = {localStorage.getItem('toCancelVet')}
+      vetUser = {localStorage.getItem('toCancelUser')}
+        /> : ''}
 
     </div>
 }

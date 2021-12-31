@@ -1,4 +1,5 @@
 import React from 'react';
+import firebase from 'firebase'
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
@@ -22,13 +23,37 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function TransitionsModal(props) {
-//   console.log(props.open)
-    // console.log(props.appointmentId)
+  const userId = localStorage.getItem('userId')
   const classes = useStyles();
   const [open, setOpen] = React.useState(props.open);
 
-  const cancelMeeting = () =>{
-    console.log('cancel')
+  const CancelMeeting = async () =>{
+    // deleting from user Ebd
+    const snapshot1 = await firebase.firestore()
+                          .collection('users')
+                          .doc(props.vetUser)
+                          .collection('appointments')
+                          .limit(1)
+                          .where('appointmentId','==',props.appointmentId)
+                          .get()
+    
+    // console.log(snapshot1)
+    const doc1 = snapshot1.docs[0]
+    doc1.ref.delete()
+
+  // Deleting from Vetnery end
+    const snapshot2 = await firebase.firestore()
+                            .collection('products')
+                            .doc('vets')
+                            .collection('profile')
+                            .doc(userId)
+                            .collection('appointments')
+                            .limit(1)
+                            .where('appointmentId','==',props.appointmentId)
+                            .get()
+    console.log(snapshot2)
+    const doc2 = snapshot2.docs[0]
+    doc2.ref.delete()
   }
   const handleOpen = () => {
     setOpen(props.open);
@@ -60,7 +85,13 @@ export default function TransitionsModal(props) {
             <p id="transition-modal-description">react-transition-group animates me.</p>
             <p>{props.appointmentId}</p>
             <a href='/userprofile'><button onClick={handleClose}>Close</button></a>
-            <button onClick={cancelMeeting}>Confirm Cancellation</button>
+            <button onClick={()=>{
+              CancelMeeting()
+              // console.log(data.vetId)
+              localStorage.setItem('cancelledMeeting' , props.appointmentId)
+              localStorage.setItem('cancelledVet' , props.vetId)
+              window.alert('Click close to go back to Previous Screen')
+              }}>Confirm Cancellation</button>
           </div>
         </Fade>
       </Modal>
