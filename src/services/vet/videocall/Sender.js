@@ -2,15 +2,35 @@ import './style.css'
 import React from 'react';
 import Button from '@mui/material/Button';
 import { TextField } from "@mui/material";
-import { useRef, useState } from "react"
+import { useRef, useState , useEffect } from "react"
 import VideoCam from "../../../ui/VetService/VideoCallComps/VideoCam"
 import Mic from "../../../ui/VetService/VideoCallComps/Mic"
 import Chatbox from "../../../ui/VetService/VideoCallComps/Chatbox"
 import { Chatbtn } from "../../../ui/VetService/VideoCallComps/Chatbox"
 import CallEndIcon from '@mui/icons-material/CallEnd';
 // import './style.css'
+import firebase from 'firebase'
+function GetUser(){
+    const id = localStorage.getItem('userId')
+    const [data,setdata] = useState([])
+    useEffect(() => {
+        firebase.firestore()
+        .collection('products').doc('vets').collection('profile')
+        .onSnapshot((snapshot) =>{
+            setdata(snapshot.docs.map((doc)=>doc.data()))
+        })
+    }, [])
+  
+    for(var i=0 ; i<data.length ; i++){
+        if(data[i]['id']==id){
+            setdata(data[i])
+        }
+    }
+    return data;
+  }
 const Sender = (props) => {
-    
+    const User = GetUser()
+    console.log(User.name)
     const chatRef = useRef();
     const btnRef = useRef();
     const { history } = props
