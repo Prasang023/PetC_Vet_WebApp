@@ -5,15 +5,20 @@ import { TextField } from "@mui/material";
 import { useRef, useState } from "react"
 import VideoCam from "../../../ui/VetService/VideoCallComps/VideoCam"
 import Mic from "../../../ui/VetService/VideoCallComps/Mic"
+import Chatbox from "../../../ui/VetService/VideoCallComps/Chatbox"
+import { Chatbtn } from "../../../ui/VetService/VideoCallComps/Chatbox"
 import CallEndIcon from '@mui/icons-material/CallEnd';
 // import './style.css'
 const Sender = (props) => {
     
+    const chatRef = useRef();
+    const btnRef = useRef();
     const { history } = props
     console.log(props)
     
     let currentMeeting = sessionStorage.getItem("currentMeeting")
-    const webSocket = new WebSocket("wss://intense-reef-21186.herokuapp.com/")
+    // const webSocket = new WebSocket("wss://intense-reef-21186.herokuapp.com/")
+    const webSocket = new WebSocket("ws://localhost:5000/")
     console.log(webSocket)
     webSocket.onmessage = (event) => {
         handleSignallingData(JSON.parse(event.data))
@@ -26,6 +31,10 @@ const Sender = (props) => {
                 break
             case "candidate":
                 peerConn.addIceCandidate(data.candidate)
+                break
+            case "chat_message":
+                console.log(data.message)
+                chatRef.current.childChat(data)
         }
     }
     
@@ -165,6 +174,22 @@ const Sender = (props) => {
         history.push("/dashboard")
     }
 
+    function send(obj){
+        console.log("send tapped")
+        obj.type = "chat_message"
+        sendData(obj)
+    }
+
+    
+    function hide(){
+        chatRef.current.hide()
+
+    }
+
+    function closeicon(){
+        btnRef.current.changeBtn()
+    }
+
     return ( 
         <div>
             <div>
@@ -177,11 +202,19 @@ const Sender = (props) => {
             <div id="video-call-div">
                 <video muted id="local-video" autoplay></video>
                 <video id="remote-video" autoplay></video>
-                <div className='call-action-div'>
+                <div className='call-action-div' >
                     <div className='action' onClick={muteVideo}><VideoCam /></div>
                     <div className='action' onClick={muteAudio}><Mic /></div>
                     <div className='action' onClick={shut}><Button variant="contained" color="primary" size="large"><CallEndIcon /></Button></div>
+                    <div className='action' onClick={hide}><Chatbtn ref={btnRef} /></div>                  
                 </div>
+                <div id='chat-box' style={{ height: '100vh', Color : '#fff', position: 'absolute', right: '0', top: '0', zIndex: '2' }}>
+                <Chatbox 
+                    ref={chatRef}
+                    call={send}
+                    closeicon={closeicon}
+                />
+                </div>           
             </div>
         </div>
      );
