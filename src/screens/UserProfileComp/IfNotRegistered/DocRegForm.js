@@ -11,14 +11,22 @@ const DocRegForm = () => {
     const [workplace, setworkplace] = useState('')
     const [phone, setphone] = useState()
     const [email, setemail] = useState('')
-
+    const [dayAvailable , setdayAvailable] = useState([])
+    const schedule = {
+        start:'',
+        end:''
+    }
+    const [start , setstart] = useState('')
+    const [end , setend] = useState('')
+    // console.log(schedule)
     const [filledBasic, setfilledBasic] = useState(false)
     let id 
     id = firebase.auth().currentUser.uid
     let db = firebase.database()
     function onSubmit(e) {
         e.preventDefault()
-
+        schedule.start = start;
+        schedule.end = end;
         const unsubscribe = firebase
             .firestore()
             .collection('products').doc('vets').collection('profile').doc(id)
@@ -29,7 +37,9 @@ const DocRegForm = () => {
                 email:email,
                 workplace:workplace,
                 home:home,
-                age:age
+                age:age, 
+                schedule:schedule,
+                dayAvailable:dayAvailable
             })
             .then(()=>{
                setname('')
@@ -38,6 +48,9 @@ const DocRegForm = () => {
                setworkplace('')
                sethome('')
                setage('')
+            //    setstart('')
+            //    setend('')
+            //    setdayAvailable([])
             })
      
         setfilledBasic(true)
@@ -76,6 +89,13 @@ const DocRegForm = () => {
                  <label>Work Place</label>
                  <input type='string' value={workplace} onChange ={e => setworkplace(e.currentTarget.value)} />
             </div>
+            {/* <div>
+                 <label><h4>Schedule</h4></label>
+                 <label>start</label>
+                 <input type='string' value={start} onChange ={e => setstart(e.currentTarget.value)} />
+                 <label>end</label>
+                 <input type='string' value={end} onChange ={e => setend(e.currentTarget.value)} />
+            </div> */}
             <br />
             <button>Continue</button>
      </form> : <DocKYC />
