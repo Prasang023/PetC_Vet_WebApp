@@ -57,6 +57,15 @@ export default function CheckboxList() {
         time : [parseInt(startVal) , parseInt(endVal)],
         slots: {}
       })
+      const unsubscribe2 = fire
+      .firestore()
+      .collection('products').doc('vets').collection('profile').doc(id)
+      .set({
+        id : id,
+        schedule:ans,
+        time : [parseInt(startVal) , parseInt(endVal)],
+        slots: {}
+      })
   }  
   const days = ['Sunday','Monday','Tuesday' ,'Wednesday','Thursday','Friday','Saturday']
   
