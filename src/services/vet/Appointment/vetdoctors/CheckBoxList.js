@@ -51,7 +51,7 @@ export default function CheckboxList() {
     const unsubscribe = fire
       .firestore()
       .collection('products').doc('vets').collection('profile').doc(id).collection('schedule').doc(id)
-      .set({
+      .update({
         id : id,
         schedule:ans,
         time : [parseInt(startVal) , parseInt(endVal)],
@@ -60,7 +60,7 @@ export default function CheckboxList() {
       const unsubscribe2 = fire
       .firestore()
       .collection('products').doc('vets').collection('profile').doc(id)
-      .set({
+      .update({
         id : id,
         schedule:ans,
         time : [parseInt(startVal) , parseInt(endVal)],

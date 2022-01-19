@@ -30,7 +30,7 @@ const DocRegForm = () => {
         const unsubscribe = firebase
             .firestore()
             .collection('products').doc('vets').collection('profile').doc(id)
-            .set({
+            .update({
                 name:name,
                 id:id,
                 phone:phone,
