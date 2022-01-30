@@ -24,21 +24,92 @@ const useStyles = makeStyles((theme) => ({
 
 export default function TransitionsModal(props) {
   const userId = localStorage.getItem('userId')
+  const option = props.res
+  // console.log(option)
   const classes = useStyles();
   const [open, setOpen] = React.useState(props.open);
 
   const CancelMeeting = async () =>{
+    // console.log(option)
     // deleting from user Ebd
+
+    firebase.firestore()
+    .collection('users')
+    .doc(option.userId)
+    .collection('appointments')
+    .doc('system')
+    .collection('cancelled')
+    .doc(option.appointmentId)
+    .set({
+        status:'cancelled',
+        appointmentId: option.appointmentId,
+        description: option.description,
+        petName:option.petName ,
+        petType: option.petType,
+        preferredloc:option.preferredloc ,
+        selectedDate: option.selectedDate,
+        selectedSlot:option.selectedSlot ,
+        userId:option.userId ,
+        vetType:option.vetType,
+        vetneryAssigned:userId
+    })
+  
+  
+
+  firebase.firestore()
+  .collection('admin')
+  .doc('vets')
+  .collection('appointments')
+  .doc('system')
+  .collection('cancelled')
+  .doc(option.appointmentId)
+  .set({
+      appointmentId: option.appointmentId,
+      description: option.description,
+      petName:option.petName ,
+      petType: option.petType,
+      preferredloc:option.preferredloc ,
+      selectedDate: option.selectedDate,
+      selectedSlot:option.selectedSlot ,
+      userId:option.userId ,
+      vetType:option.vetType,
+      vetneryAssigned:userId
+  })
+
+  firebase.firestore()
+    .collection('products')
+    .doc('vets')
+    .collection('profile')
+    .doc(userId)
+    .collection('appointments')
+    .doc('system')
+    .collection('cancelled')
+    .doc(option.appointmentId)
+    .set({
+        status:'cancelled',
+        appointmentId: option.appointmentId,
+        description: option.description,
+        petName:option.petName ,
+        petType: option.petType,
+        preferredloc:option.preferredloc ,
+        selectedDate: option.selectedDate,
+        selectedSlot:option.selectedSlot ,
+        userId:option.userId ,
+        vetType:option.vetType,
+        vetneryAssigned:userId
+    })
+
     const snapshot1 = await firebase.firestore()
-                          .collection('users')
-                          .doc(props.vetUser)
-                          .collection('appointments')
-                          .limit(1)
-                          .where('appointmentId','==',props.appointmentId)
-                          .get()
-    
-    // console.log(snapshot1)
+                            .collection('users')
+                            .doc(option.userId)
+                            .collection('appointments')
+                            .doc('system')
+                            .collection('upcoming')
+                            .limit(1)
+                            .where('appointmentId','==',option.appointmentId)
+                            .get()
     const doc1 = snapshot1.docs[0]
+    console.log('user: ' , doc1.id)
     doc1.ref.delete()
 
   // Deleting from Vetnery end
@@ -48,12 +119,28 @@ export default function TransitionsModal(props) {
                             .collection('profile')
                             .doc(userId)
                             .collection('appointments')
+                            .doc('system')
+                            .collection('pending')
                             .limit(1)
-                            .where('appointmentId','==',props.appointmentId)
+                            .where('appointmentId','==',option.appointmentId)
                             .get()
-    console.log(snapshot2)
     const doc2 = snapshot2.docs[0]
+    console.log('vet: ' , doc2.id)
     doc2.ref.delete()
+
+    const snapshot3 = await firebase.firestore()
+                            .collection('admin')
+                            .doc('vets')
+                            .collection('appointments')
+                            .doc('system')
+                            .collection('assigned')
+                            .limit(1)
+                            .where('appointmentId','==',option.appointmentId)
+                            .get()
+    const doc3 = snapshot3.docs[0]
+    console.log('admin: ' , doc3.id)
+    doc3.ref.delete()
+
   }
   const handleOpen = () => {
     setOpen(props.open);
@@ -83,13 +170,10 @@ export default function TransitionsModal(props) {
           <div className={classes.paper}>
             <h2 id="transition-modal-title">Transition modal</h2>
             <p id="transition-modal-description">react-transition-group animates me.</p>
-            <p>{props.appointmentId}</p>
+            <p>{option.appointmentId}</p>
             <a href='/userprofile'><button onClick={handleClose}>Close</button></a>
             <button onClick={()=>{
-              CancelMeeting()
-              // console.log(data.vetId)
-              localStorage.setItem('cancelledMeeting' , props.appointmentId)
-              localStorage.setItem('cancelledVet' , props.vetId)
+              CancelMeeting(option)
               window.alert('Click close to go back to Previous Screen')
               }}>Confirm Cancellation</button>
           </div>

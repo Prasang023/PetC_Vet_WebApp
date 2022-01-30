@@ -11,10 +11,11 @@ function SaveMeeting(val){
 
 function GetMeetings(){
     const [data,setdata] = useState([])
+    // console.log(id)
    useEffect(()=>{
     firebase
     .firestore()
-    .collection('products').doc('vets').collection('profile').doc(id).collection('appointments')
+    .collection('products').doc('vets').collection('profile').doc(id).collection('appointments').doc('system').collection('pending')
     .onSnapshot((snapshot) => setdata(snapshot.docs.map(doc => doc.data())))   
    },[])
    return data
@@ -26,27 +27,23 @@ export default function(){
     function openModal(){
       setopen(true)
     }
-
+    const [res,setres] = useState('')
     
     return <div>
         This is appointment Page
         {
             data.map((res,i)=><div>
-                <p>{i} :  <Link to='/sender' ><Button onClick={() => SaveMeeting(res['meetingid'])}>{res['meetingid']}</Button></Link></p>
+                <p>{i} :  <Link to='/sender' ><Button onClick={() => SaveMeeting(res['meetingid'])}>{res.appointmentId}</Button></Link></p>
                 <Button onClick={()=> 
                 {
+                  setres(res)
                   openModal()
-                  localStorage.setItem('toCancel' ,res['appointmentId'] )
-                  localStorage.setItem('toCancelVet' ,id )
-                  localStorage.setItem('toCancelUser' , res['userId'])
                 }
                   }>Cancel</Button>
             </div>)
         }
       {open ? <TransitionsModal open={open} 
-      appointmentId={localStorage.getItem('toCancel')}
-      vetId = {localStorage.getItem('toCancelVet')}
-      vetUser = {localStorage.getItem('toCancelUser')}
+            res = {res}
         /> : ''}
 
     </div>
